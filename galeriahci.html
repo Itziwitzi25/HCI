@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Galería de Pinturas - Test</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0; padding: 0; background: #fafafa;
+  }
+  #gallery {
+    max-width: 600px;
+    margin: 20px auto;
+    position: relative;
+  }
+  img {
+    width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  button {
+    padding: 10px 20px;
+    margin: 10px 15px;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background: #6c5ce7;
+    color: white;
+    transition: background 0.3s;
+  }
+  button:hover:not(:disabled) {
+    background: #341f97;
+  }
+  button:disabled {
+    background: #bbb;
+    cursor: default;
+  }
+  #timer {
+    font-size: 1.2rem;
+    margin-top: 10px;
+    color: #333;
+  }
+  #finishBtn {
+    display: none;
+    margin-top: 20px;
+    background: #00b894;
+  }
+</style>
+</head>
+<body>
+
+<h1>Galería de Pinturas</h1>
+<div id="gallery">
+  <img id="painting" src="" alt="Pintura" />
+  <div>
+    <button id="prevBtn">Anterior</button>
+    <button id="nextBtn">Siguiente</button>
+  </div>
+  <div id="timer">Tiempo restante: 08:00</div>
+  <button id="finishBtn">Ir al cuestionario</button>
+</div>
+
+<script>
+  // Lista de pinturas con sus nombres y URLs (puedes cambiar las URLs por las tuyas)
+  const paintings = [
+    {title: "Las dos Fridas", src: "https://historia-arte.com/_/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpbSI6WyJcL2FydHdvcmtcL2ltYWdlRmlsZVwvNWQ3YjdjOGI3NzczOS5qcGVnIiwicmVzaXplLDIwMDAsMjAwMCJdfQ.QfgFpqlwgF9Mh9oBKGq_q1PNq4mjsOmHUqcDyzcWcRU.jpeg"},
+    {title: "Sin Esperanza", src: "https://www.kahlo.org/Without%20Hope%20Frida%20Kahlo.jpg"},
+    {title: "Hospital Henry Ford (El venado herido)", src: "https://www.kahlo.org/Henry%20Ford%20Hospital%20Frida%20Kahlo.jpg"},
+    {title: "Retrato de Tehuana", src: "https://artikabooks.com/wp-content/uploads/2021/11/3-Autorretrato-de-tehuana.jpg"},
+    {title: "Skull", src: "https://upload.wikimedia.org/wikipedia/en/1/11/Untitled-Head-Jean-Michel_Basquiat-1981.jpg"},
+    {title: "Hollywood Africans", src: "https://upload.wikimedia.org/wikipedia/en/5/5f/Hollywood-Africans-1983.jpg"},
+    {title: "King Charles I", src: "http://upload.wikimedia.org/wikipedia/en/a/af/Jean-Michel-Basquiat-Charles-the-First-1982.jpg"},
+    {title: "Untitled (1981)", src: "https://upload.wikimedia.org/wikipedia/en/f/f6/Untitled1982Basquiat.jpg"}
+  ];
+
+  let currentIndex = 0;
+  const paintingEl = document.getElementById('painting');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const finishBtn = document.getElementById('finishBtn');
+  const timerEl = document.getElementById('timer');
+
+  // Mostrar la pintura actual
+  function showPainting(index) {
+    const p = paintings[index];
+    paintingEl.src = p.src;
+    paintingEl.alt = p.title;
+    // Botones habilitados/deshabilitados según índice
+    prevBtn.disabled = index === 0;
+    nextBtn.disabled = index === paintings.length - 1;
+  }
+
+  prevBtn.addEventListener('click', () => {
+    if (currentIndex > 0) {
+      currentIndex--;
+      showPainting(currentIndex);
+    }
+  });
+
+  nextBtn.addEventListener('click', () => {
+    if (currentIndex < paintings.length - 1) {
+      currentIndex++;
+      showPainting(currentIndex);
+    }
+  });
+
+  finishBtn.addEventListener('click', () => {
+    window.open('https://docs.google.com/forms/d/e/1FAIpQLSefW9OmBse5DURrh0lKmaWML3SONmCRgEeJou0DsU4IWedp-Q/viewform?usp=header', '_blank');
+  });
+
+  // Timer 2 minutos (120 segundos)
+  let timeLeft = 480;
+  function updateTimer() {
+    let minutes = Math.floor(timeLeft / 60).toString().padStart(2,'0');
+    let seconds = (timeLeft % 60).toString().padStart(2,'0');
+    timerEl.textContent = `Tiempo restante: ${minutes}:${seconds}`;
+
+    if(timeLeft <= 0) {
+      clearInterval(timerInterval);
+      finishBtn.style.display = 'inline-block';
+      prevBtn.disabled = true;
+      nextBtn.disabled = true;
+      timerEl.textContent = "Tiempo cumplido. Por favor, continúa al cuestionario.";
+    }
+    timeLeft--;
+  }
+
+  // Iniciar galería y timer
+  showPainting(currentIndex);
+  const timerInterval = setInterval(updateTimer, 1000);
+</script>
+
+</body>
+</html>
